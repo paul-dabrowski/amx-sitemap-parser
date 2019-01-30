@@ -10,7 +10,18 @@ $header = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.
 <input type="text" id="myInput" onkeyup="mySearchFunction()" placeholder="Search for products..">
 <table id="myTable">';
 
-set_time_limit(400);
+$destfile = 'AMXindex.html'; //Destination filename for the final result.
+$filename = 'sitemap.xml'; //Local filename for the sitemap to be parsed.
+
+//check if filelocation is writeable
+if( (is_writable(__FILE__)) || (is_writable($destfile)) ) {
+  set_time_limit(400);
+} else {
+  echo $header;
+  echo '<h2>Filename '.$destfile.' is not writeable. Please check file and/or directory permissions</h2>';
+  echo '</body></html>';
+  die();
+}
  
 $currentElement = '';
 $currentLoc = '';
@@ -106,7 +117,7 @@ xml_set_element_handler($xml_parser,"startElement", "endElement");
 xml_set_character_data_handler($xml_parser, "characterData");
  
 // open xml file
-$filename = 'sitemap.xml';
+
 if ( !($fp = fopen($filename, "r")) ) {
  die("could not open XML input");
 };
@@ -144,7 +155,7 @@ $footer = '</table>
 </body></html>';
 
 // write output to a file
-$fp2 = fopen('AMXindex.html', "w+");
+$fp2 = fopen($destfile, "w+");
 fwrite($fp2,$header.$map.$footer);
 fclose($fp2);
  
